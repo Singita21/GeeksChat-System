@@ -1,21 +1,26 @@
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { StudentComponent } from './student/student.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ChatComponent } from './chat/chat.component';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { UserComponent } from './user/user.component';
+import { MainComponent } from './main/main.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    StudentComponent
+    ChatComponent,
+    UserComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule
   ],
   providers: [],
