@@ -1,9 +1,11 @@
 package com.codreal.chatservice.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Document(collection = "chats_database_sequences")
+@Entity
+@Table(name = "chats_database_sequences")
 public class DatabaseSequence {
 
     @Id

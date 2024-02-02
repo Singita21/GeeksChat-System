@@ -6,7 +6,6 @@ import com.codreal.chatservice.exceptions.NoChatExistsInTheRepository;
 import com.codreal.chatservice.model.Chat;
 import com.codreal.chatservice.model.Message;
 
-import java.util.HashSet;
 import java.util.List;
 
 public interface ChatService {
@@ -17,13 +16,13 @@ public interface ChatService {
 
     Chat getById(int id)  throws ChatNotFoundException;
 
-    HashSet<Chat> getChatByFirstUserName(String username)  throws ChatNotFoundException;
+    List<Chat> getChatByFirstUserName(String username)  throws ChatNotFoundException;
 
-    HashSet<Chat> getChatBySecondUserName(String username)  throws ChatNotFoundException;
+    List<Chat> getChatBySecondUserName(String username)  throws ChatNotFoundException;
 
-    HashSet<Chat> getChatByFirstUserNameOrSecondUserName(String username)  throws ChatNotFoundException;
+    List<Chat> getChatByFirstUserNameOrSecondUserName(String username)  throws ChatNotFoundException;
 
-    HashSet<Chat> getChatByFirstUserNameAndSecondUserName(String firstUserName, String secondUserName)  throws ChatNotFoundException;
+    List<Chat> getChatByFirstUserNameAndSecondUserName(String firstUserName, String secondUserName)  throws ChatNotFoundException;
 
     Chat addMessage(Message add, int chatId)  throws ChatNotFoundException;
 }

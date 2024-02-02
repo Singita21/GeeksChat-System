@@ -1,19 +1,22 @@
 package com.codreal.chatservice.repository;
 
 import com.codreal.chatservice.model.Chat;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.List;
 
 @Repository
-public interface ChatRepository extends MongoRepository<Chat, Integer> {
+public interface ChatRepository extends JpaRepository<Chat, Integer> {
 
-    HashSet<Chat> getChatByFirstUserName(String username);
+    List<Chat> getChatByFirstUserName(String username);
 
-    HashSet<Chat> getChatBySecondUserName(String username);
+    List<Chat> getChatBySecondUserName(String username);
 
-    HashSet<Chat> getChatByFirstUserNameAndSecondUserName(String firstUserName, String secondUserName);
+    List<Chat> getChatByFirstUserNameAndSecondUserName(String firstUserName, String secondUserName);
 
-    HashSet<Chat> getChatBySecondUserNameAndFirstUserName(String firstUserName, String secondUserName);
+    List<Chat> getChatBySecondUserNameAndFirstUserName(String firstUserName, String secondUserName);
 }
+
+

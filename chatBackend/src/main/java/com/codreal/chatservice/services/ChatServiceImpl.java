@@ -9,17 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ChatServiceImpl implements ChatService {
 
+    private final ChatRepository chatRepository;
+    private final SequenceGeneratorService sequenceGeneratorService;
+
     @Autowired
-    private ChatRepository chatRepository;
-    @Autowired
-    private SequenceGeneratorService sequenceGeneratorService;
+    public ChatServiceImpl(ChatRepository chatRepository, SequenceGeneratorService sequenceGeneratorService) {
+        this.chatRepository = chatRepository;
+        this.sequenceGeneratorService = sequenceGeneratorService;
+    }
 
     public Chat addChat(Chat chat) {
         chat.setChatId(sequenceGeneratorService.generateSequence(Chat.SEQUENCE_NAME));
@@ -28,90 +31,73 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> findallchats() throws NoChatExistsInTheRepository {
-        if (chatRepository.findAll().isEmpty()) {
+        List<Chat> allChats = chatRepository.findAll();
+        if (allChats.isEmpty()) {
             throw new NoChatExistsInTheRepository();
         } else {
-            return chatRepository.findAll();
+            return allChats;
         }
-
     }
 
     @Override
     public Chat getById(int id) throws ChatNotFoundException {
-        Optional<Chat> chatid = chatRepository.findById(id);
-        if (chatid.isPresent()) {
-            return chatid.get();
-        } else {
+        return chatRepository.findById(id)
+                .orElseThrow(ChatNotFoundException::new);
+    }
+
+    @Override
+    public List<Chat> getChatByFirstUserName(String username) throws ChatNotFoundException {
+        List<Chat> chatList = chatRepository.getChatByFirstUserName(username);
+        if (chatList.isEmpty()) {
             throw new ChatNotFoundException();
+        } else {
+            return chatList;
         }
     }
 
     @Override
-    public HashSet<Chat> getChatByFirstUserName(String username) throws ChatNotFoundException {
-        HashSet<Chat> chat = chatRepository.getChatByFirstUserName(username);
-
-        if (chat.isEmpty()) {
+    public List<Chat> getChatBySecondUserName(String username) throws ChatNotFoundException {
+        List<Chat> chatList = chatRepository.getChatBySecondUserName(username);
+        if (chatList.isEmpty()) {
             throw new ChatNotFoundException();
         } else {
-            return chat;
+            return chatList;
         }
     }
 
     @Override
-    public HashSet<Chat> getChatBySecondUserName(String username) throws ChatNotFoundException {
-        HashSet<Chat> chat = chatRepository.getChatBySecondUserName(username);
-        if (chat.isEmpty()) {
+    public List<Chat> getChatByFirstUserNameOrSecondUserName(String username) throws ChatNotFoundException {
+        List<Chat> chatList = new ArrayList<>(chatRepository.getChatByFirstUserName(username));
+        chatList.addAll(chatRepository.getChatBySecondUserName(username));
+
+        if (chatList.isEmpty()) {
             throw new ChatNotFoundException();
         } else {
-            return chat;
+            return chatList;
         }
     }
 
     @Override
-    public HashSet<Chat> getChatByFirstUserNameOrSecondUserName(String username) throws ChatNotFoundException {
-        HashSet<Chat> chat = chatRepository.getChatByFirstUserName(username);
-        HashSet<Chat> chat1 = chatRepository.getChatBySecondUserName(username);
+    public List<Chat> getChatByFirstUserNameAndSecondUserName(String firstUserName, String secondUserName) throws ChatNotFoundException {
+        List<Chat> chatList = new ArrayList<>(chatRepository.getChatByFirstUserNameAndSecondUserName(firstUserName, secondUserName));
+        chatList.addAll(chatRepository.getChatBySecondUserNameAndFirstUserName(firstUserName, secondUserName));
 
-        chat1.addAll(chat);
-
-        if (chat.isEmpty() && chat1.isEmpty()) {
+        if (chatList.isEmpty()) {
             throw new ChatNotFoundException();
-        } else if (chat1.isEmpty()) {
-            return chat;
         } else {
-            return chat1;
-        }
-    }
-
-    @Override
-    public HashSet<Chat> getChatByFirstUserNameAndSecondUserName(String firstUserName, String secondUserName) throws ChatNotFoundException {
-        HashSet<Chat> chat = chatRepository.getChatByFirstUserNameAndSecondUserName(firstUserName, secondUserName);
-        HashSet<Chat> chat1 = chatRepository.getChatBySecondUserNameAndFirstUserName(firstUserName, secondUserName);
-        if (chat.isEmpty() && chat1.isEmpty()) {
-            throw new ChatNotFoundException();
-        } else if (chat.isEmpty()) {
-            return chat1;
-        } else {
-            return chat;
+            return chatList;
         }
     }
 
     @Override
     public Chat addMessage(Message add, int chatId) throws ChatNotFoundException {
-        Optional<Chat> chat=chatRepository.findById(chatId);
-        Chat abc=chat.get();
+        Optional<Chat> optionalChat = chatRepository.findById(chatId);
+        Chat existingChat = optionalChat.orElseThrow(ChatNotFoundException::new);
 
-        if(abc.getMessageList()==null){
-            List<Message> msg=new ArrayList<>();
-            msg.add(add);
-            abc.setMessageList(msg);
-            return chatRepository.save(abc);
-        }else{
-            List<Message> rates=abc.getMessageList();
-            rates.add(add);
-            abc.setMessageList(rates);
-            return chatRepository.save(abc);
-        }
+        List<Message> messageList = Optional.ofNullable(existingChat.getMessageList()).orElse(new ArrayList<>());
+        messageList.add(add);
+        existingChat.setMessageList(messageList);
+
+        return chatRepository.save(existingChat);
     }
-
 }

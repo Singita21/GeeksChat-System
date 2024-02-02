@@ -1,18 +1,25 @@
 package com.codreal.chatservice.model;
 
-import org.springframework.data.annotation.Id;
+import lombok.*;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Id;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Table;
 import java.util.List;
 
-@Document(collection = "chats")
+@Entity
+@Table(name = "chats")
+
 public class Chat {
 
     @Transient
     public static final String SEQUENCE_NAME = "chat_sequence";
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int chatId;
     private String firstUserName;
     private String secondUserName;
