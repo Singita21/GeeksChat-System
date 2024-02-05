@@ -1,6 +1,5 @@
 package com.codreal.chatservice.model;
 
-import lombok.*;
 import org.springframework.data.annotation.Transient;
 import javax.persistence.Id;
 

@@ -1,15 +1,16 @@
 package com.codreal.chatservice.model;
 
-import org.springframework.data.annotation.Id;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "chats_database_sequences")
+@SequenceGenerator(name = "seq_generator", sequenceName = "your_sequence_name", allocationSize = 1)
 public class DatabaseSequence {
 
     @Id
     private String id;
+
+    @Column(name = "seq")
     private int seq;
 
     public DatabaseSequence() {
